@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gaunt Weather</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        // Auto-refresh the page every 30 minutes (1800000 milliseconds)
+        setTimeout(function() {
+            // Add timestamp to prevent caching
+            const timestamp = new Date().getTime();
+            window.location.href = window.location.pathname + '?t=' + timestamp;
+        }, 1800000);
+        
+        // Display a countdown timer to show when the next update will happen
+        document.addEventListener('DOMContentLoaded', function() {
+            const updateInterval = 30 * 60; // 30 minutes in seconds
+            let timeLeft = updateInterval;
+            
+            // Create last updated element when page loads
+            const updateTimeElement = document.createElement('div');
+            updateTimeElement.className = 'update-time';
+            updateTimeElement.innerHTML = `
+                <p>Last updated: ${new Date().toLocaleTimeString()}</p>
+                <div class="refresh-container">
+                    <p>Next update in <span id="countdown">30:00</span></p>
+                    <button id="refresh-button" title="Refresh now"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            `;
+            
+            // Add timer to update countdown every second
+            const countdownInterval = setInterval(function() {
+                timeLeft--;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('countdown').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+            
+            // Insert the element at the bottom of the weather card after DOM is loaded
+            setTimeout(function() {
+                const weatherCard = document.querySelector('.weather-card');
+                if (weatherCard) {
+                    weatherCard.insertAdjacentElement('beforeend', updateTimeElement);
+                    
+                    // Add click event to refresh button
+                    const refreshButton = document.getElementById('refresh-button');
+                    if (refreshButton) {
+                        refreshButton.addEventListener('click', function() {
+                            // Show refresh animation
+                            this.classList.add('rotating');
+                            // Reload the page after a brief delay to show the animation
+                            // Add a timestamp to prevent browser caching
+                            setTimeout(() => {
+                                const timestamp = new Date().getTime();
+                                window.location.href = window.location.pathname + '?t=' + timestamp;
+                            }, 500);
+                        });
+                    }
+                }
+            }, 100);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="weather-card">
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% else %}
+                <div class="current-weather">
+                    <h2>Current Weather</h2>
+                    <div class="weather-info">
+                        <div class="current-main">
+                            <div class="current-temp-icon">
+                                <div class="temp">{{ current.temperature }}°{{ current.temperatureUnit }}</div>
+                                <div class="current-icon">
+                                    {% if 'Sunny' in current.shortForecast %}
+                                        <i class="fas fa-sun"></i>
+                                    {% elif 'Clear' in current.shortForecast %}
+                                        <i class="fas fa-sun"></i>
+                                    {% elif 'Cloud' in current.shortForecast or 'Cloudy' in current.shortForecast %}
+                                        <i class="fas fa-cloud"></i>
+                                    {% elif 'Rain' in current.shortForecast or 'Showers' in current.shortForecast %}
+                                        <i class="fas fa-cloud-rain"></i>
+                                    {% elif 'Thunder' in current.shortForecast %}
+                                        <i class="fas fa-bolt"></i>
+                                    {% elif 'Snow' in current.shortForecast %}
+                                        <i class="fas fa-snowflake"></i>
+                                    {% else %}
+                                        <i class="fas fa-cloud"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="description">{{ current.shortForecast }}</p>
+                            <p class="wind"><i class="fas fa-wind"></i> {{ current.windSpeed }} {{ current.windDirection }}</p>
+                        </div>
+                        <div class="current-humidity">
+                            <div class="humidity-value">
+                                <i class="fas fa-tint"></i>
+                                <span>{{ current.humidity | round }}%</span>
+                            </div>
+                            <p>Humidity</p>
+                        </div>
+                        <div class="current-astronomy">
+                            <div class="sun-times">
+                                <div class="sunset">
+                                    <div class="icon-container">
+                                        <img src="{{ url_for('static', filename='icons/sunset.png') }}" alt="Sunset" class="sun-icon">
+                                    </div>
+                                    <div class="time-info">
+                                        <span>{{ astronomy.sunset }}</span>
+                                        <p>Sunset</p>
+                                    </div>
+                                </div>
+                                <div class="sunrise">
+                                    <div class="icon-container">
+                                        <img src="{{ url_for('static', filename='icons/sunrise.png') }}" alt="Sunrise" class="sun-icon">
+                                    </div>
+                                    <div class="time-info">
+                                        <span>{{ astronomy.sunrise }}</span>
+                                        <p>Tomorrow's Sunrise</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forecast">
+                    <h2>4-Day Forecast</h2>
+                    <div class="forecast-grid">
+                        {% for day in forecast %}
+                        <div class="forecast-day">
+                            <h3>{{ day.name.split()[0][:3] }}</h3>
+                            <div class="weather-icon">
+                                {% if 'Sunny' in day.shortForecast %}
+                                    <i class="fas fa-sun"></i>
+                                {% elif 'Clear' in day.shortForecast %}
+                                    <i class="fas fa-sun"></i>
+                                {% elif 'Cloud' in day.shortForecast or 'Cloudy' in day.shortForecast %}
+                                    <i class="fas fa-cloud"></i>
+                                {% elif 'Rain' in day.shortForecast or 'Showers' in day.shortForecast %}
+                                    <i class="fas fa-cloud-rain"></i>
+                                {% elif 'Thunder' in day.shortForecast %}
+                                    <i class="fas fa-bolt"></i>
+                                {% elif 'Snow' in day.shortForecast %}
+                                    <i class="fas fa-snowflake"></i>
+                                {% else %}
+                                    <i class="fas fa-cloud"></i>
+                                {% endif %}
+                            </div>
+                            <div class="temp-range">
+                                <span class="high">{{ day.high_temp }}°</span>
+                                <span class="separator">/</span>
+                                <span class="low">{{ day.low_temp }}°</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

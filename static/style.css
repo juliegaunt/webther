@@ -1,0 +1,392 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1a1f2b;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.weather-card {
+    background: #323a4e;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+    color: #e1e5ee;
+}
+
+.current-weather {
+    margin-bottom: 40px;
+}
+
+.weather-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.current-main {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.current-temp-icon {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 10px;
+}
+
+.temp {
+    font-size: 56px;
+    font-weight: bold;
+    color: #1a73e8;
+}
+
+.current-icon {
+    font-size: 50px;
+}
+
+.current-icon .fa-sun {
+    color: #ffd700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.current-icon .fa-cloud {
+    color: #7b8aa0;
+}
+
+.current-icon .fa-cloud-rain {
+    color: #4682b4;
+}
+
+.current-icon .fa-bolt {
+    color: #ffd700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.current-icon .fa-snowflake {
+    color: #87ceeb;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.current-main .description {
+    font-size: 22px;
+    margin-bottom: 8px;
+    max-width: 90%;
+}
+
+.current-main .wind {
+    font-size: 18px;
+    color: #a8b5c5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.current-humidity, .current-astronomy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 30px;
+    border-left: 1px solid #e1e4e8;
+    flex: 1;
+    width: 120px; /* Fixed width for both */
+}
+
+.current-astronomy .sun-times {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: transparent;
+    backdrop-filter: none; /* Ensure no blur is applied */
+}
+
+.current-astronomy .sunset,
+.current-astronomy .sunrise {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.current-astronomy .time-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.current-astronomy .icon-container {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.current-astronomy .icon-container .sun-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
+}
+
+.current-astronomy span {
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.current-astronomy p {
+    margin: 0;
+    color: #a8b5c5;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.humidity-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #3498db;
+    margin-bottom: 5px;
+}
+
+.humidity-value i {
+    font-size: 36px;
+}
+
+.current-humidity p {
+    color: #a8b5c5;
+    font-size: 16px;
+}
+
+.astronomy {
+    margin-bottom: 40px;
+    padding: 25px;
+    background: linear-gradient(135deg, #20274e 0%, #454b6e 100%);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.astronomy h2 {
+    color: white;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.astronomy-info {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.astronomy .sun-times {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 25px 40px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.sunrise, .sunset {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 16px;
+    padding: 10px;
+}
+
+.sunrise i, .sunset i {
+    font-size: 28px;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+    margin-right: 10px;
+}
+
+.sunrise .fa-sun {
+    color: #ffd700;  /* Bright yellow for sunrise */
+}
+
+.sunset .fa-sun {
+    color: #ff8c00;  /* Orange for sunset */
+}
+
+.sunrise span, .sunset span {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    font-size: 17px;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.forecast-day {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.forecast-day h3 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #e1e5ee;
+}
+
+.weather-icon {
+    font-size: 52px;
+    margin: 18px 0;
+    transition: transform 0.2s ease;
+}
+
+.weather-icon .fa-sun {
+    color: #ffd700;  /* Golden yellow for sun */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.weather-icon .fa-cloud {
+    color: #7b8aa0;  /* Soft blue-grey for clouds */
+}
+
+.weather-icon .fa-cloud-rain {
+    color: #4682b4;  /* Steel blue for rain */
+}
+
+.weather-icon .fa-bolt {
+    color: #ffd700;  /* Golden yellow for lightning */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.weather-icon .fa-snowflake {
+    color: #87ceeb;  /* Sky blue for snow */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.weather-icon i:hover {
+    transform: scale(1.1);
+}
+
+.temp-range {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.temp-range {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 20px;
+}
+
+.temp-range .high {
+    color: #e74c3c;  /* Bright red for high temp */
+    font-weight: bold;
+}
+
+.temp-range .separator {
+    color: #a8b5c5;
+}
+
+.temp-range .low {
+    color: #3498db;  /* Blue for low temp */
+    font-weight: bold;
+}
+
+.error {
+    color: #dc3545;
+    text-align: center;
+    font-size: 18px;
+}
+
+h2 {
+    color: #e1e5ee;
+    margin-bottom: 20px;
+}
+
+.update-time {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 15px;
+    color: #a8b5c5;
+    font-size: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.update-time p {
+    margin: 0;
+}
+
+.refresh-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#countdown {
+    color: #3498db;
+    font-weight: bold;
+}
+
+#refresh-button {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+#refresh-button:hover {
+    background: rgba(52, 152, 219, 0.4);
+    transform: scale(1.05);
+}
+
+#refresh-button:active {
+    transform: scale(0.95);
+}
+
+#refresh-button i {
+    font-size: 14px;
+}
+
+.rotating {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
