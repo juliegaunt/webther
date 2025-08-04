@@ -75,57 +75,116 @@
                 <p class="error">{{ error }}</p>
             {% else %}
                 <div class="current-weather">
-                    <h2>Current Weather</h2>
+                    <h2>Today's Weather</h2>
                     <div class="weather-info">
-                        <div class="current-main">
-                            <div class="current-temp-icon">
-                                <div class="temp">{{ current.temperature }}°{{ current.temperatureUnit }}</div>
-                                <div class="current-icon">
-                                    {% if 'Sunny' in current.shortForecast %}
-                                        <i class="fas fa-sun"></i>
-                                    {% elif 'Clear' in current.shortForecast %}
-                                        <i class="fas fa-sun"></i>
-                                    {% elif 'Cloud' in current.shortForecast or 'Cloudy' in current.shortForecast %}
-                                        <i class="fas fa-cloud"></i>
-                                    {% elif 'Rain' in current.shortForecast or 'Showers' in current.shortForecast %}
-                                        <i class="fas fa-cloud-rain"></i>
-                                    {% elif 'Thunder' in current.shortForecast %}
-                                        <i class="fas fa-bolt"></i>
-                                    {% elif 'Snow' in current.shortForecast %}
-                                        <i class="fas fa-snowflake"></i>
-                                    {% else %}
-                                        <i class="fas fa-cloud"></i>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <p class="description">{{ current.shortForecast }}</p>
-                            <p class="wind"><i class="fas fa-wind"></i> {{ current.windSpeed }} {{ current.windDirection }}</p>
-                        </div>
-                        <div class="current-humidity">
-                            <div class="humidity-value">
-                                <i class="fas fa-tint"></i>
-                                <span>{{ current.humidity | round }}%</span>
-                            </div>
-                            <p>Humidity</p>
-                        </div>
-                        <div class="current-astronomy">
-                            <div class="sun-times">
-                                <div class="sunset">
-                                    <div class="icon-container">
-                                        <img src="{{ url_for('static', filename='icons/sunset.png') }}" alt="Sunset" class="sun-icon">
-                                    </div>
-                                    <div class="time-info">
-                                        <span>{{ astronomy.sunset }}</span>
-                                        <p>Sunset</p>
+                        <div class="weather-row top-row">
+                            <div class="current-main">
+                                <h3>Current Weather</h3>
+                                <div class="current-temp-icon">
+                                    <div class="temp">{{ current.temperature }}°{{ current.temperatureUnit }}</div>
+                                    <div class="current-icon">
+                                        {% if 'Sunny' in current.shortForecast %}
+                                            <i class="fas fa-sun"></i>
+                                        {% elif 'Clear' in current.shortForecast %}
+                                            <i class="fas fa-sun"></i>
+                                        {% elif 'Cloud' in current.shortForecast or 'Cloudy' in current.shortForecast %}
+                                            <i class="fas fa-cloud"></i>
+                                        {% elif 'Rain' in current.shortForecast or 'Showers' in current.shortForecast %}
+                                            <i class="fas fa-cloud-rain"></i>
+                                        {% elif 'Thunder' in current.shortForecast %}
+                                            <i class="fas fa-bolt"></i>
+                                        {% elif 'Snow' in current.shortForecast %}
+                                            <i class="fas fa-snowflake"></i>
+                                        {% else %}
+                                            <i class="fas fa-cloud"></i>
+                                        {% endif %}
                                     </div>
                                 </div>
-                                <div class="sunrise">
-                                    <div class="icon-container">
-                                        <img src="{{ url_for('static', filename='icons/sunrise.png') }}" alt="Sunrise" class="sun-icon">
+                                <p class="description">{{ current.shortForecast }}</p>
+                                <p class="wind"><i class="fas fa-wind"></i> {{ current.windSpeed }} {{ current.windDirection }}</p>
+                            </div>
+                            <div class="current-main">
+                                <h3>In 6 Hours ({{ future.time }})</h3>
+                                <div class="current-temp-icon">
+                                    <div class="temp">{{ future.temperature }}°{{ future.temperatureUnit }}</div>
+                                    <div class="current-icon">
+                                        {% if 'Sunny' in future.shortForecast %}
+                                            <i class="fas fa-sun"></i>
+                                        {% elif 'Clear' in future.shortForecast %}
+                                            <i class="fas fa-sun"></i>
+                                        {% elif 'Cloud' in future.shortForecast or 'Cloudy' in future.shortForecast %}
+                                            <i class="fas fa-cloud"></i>
+                                        {% elif 'Rain' in future.shortForecast or 'Showers' in future.shortForecast %}
+                                            <i class="fas fa-cloud-rain"></i>
+                                        {% elif 'Thunder' in future.shortForecast %}
+                                            <i class="fas fa-bolt"></i>
+                                        {% elif 'Snow' in future.shortForecast %}
+                                            <i class="fas fa-snowflake"></i>
+                                        {% else %}
+                                            <i class="fas fa-cloud"></i>
+                                        {% endif %}
                                     </div>
-                                    <div class="time-info">
-                                        <span>{{ astronomy.sunrise }}</span>
-                                        <p>Tomorrow's Sunrise</p>
+                                </div>
+                                <p class="description">{{ future.shortForecast }}</p>
+                                <p class="wind"><i class="fas fa-wind"></i> {{ future.windSpeed }} {{ future.windDirection }}</p>
+                            </div>
+                        </div>
+                        <div class="weather-row bottom-row">
+                            <div class="current-humidity">
+                                <div class="humidity-value">
+                                    <i class="fas fa-tint"></i>
+                                    <span>{{ current.humidity | round }}%</span>
+                                </div>
+                                <p>Humidity</p>
+                            </div>
+                            <div class="current-astronomy">
+                                <div class="sun-times">
+                                    <div class="sunset">
+                                        <div class="icon-container">
+                                            <img src="{{ url_for('static', filename='icons/sunset.png') }}" alt="Sunset" class="sun-icon">
+                                        </div>
+                                        <div class="time-info">
+                                            <span>{{ astronomy.sunset }}</span>
+                                            <p>Sunset</p>
+                                        </div>
+                                    </div>
+                                    <div class="sunrise">
+                                        <div class="icon-container">
+                                            <img src="{{ url_for('static', filename='icons/sunrise.png') }}" alt="Sunrise" class="sun-icon">
+                                        </div>
+                                        <div class="time-info">
+                                            <span>{{ astronomy.sunrise }}</span>
+                                            <p>Tomorrow's Sunrise</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="current-moon">
+                                <div class="moon-phase">
+                                    <div class="icon-container">
+                                        {% if astronomy.moon_phase == "New Moon" %}
+                                            <i class="fas fa-moon moon-icon new-moon"></i>
+                                        {% elif astronomy.moon_phase == "Waxing Crescent" %}
+                                            <i class="fas fa-moon moon-icon waxing-crescent"></i>
+                                        {% elif astronomy.moon_phase == "First Quarter" %}
+                                            <i class="fas fa-moon moon-icon first-quarter"></i>
+                                        {% elif astronomy.moon_phase == "Waxing Gibbous" %}
+                                            <i class="fas fa-moon moon-icon waxing-gibbous"></i>
+                                        {% elif astronomy.moon_phase == "Full Moon" %}
+                                            <i class="fas fa-moon moon-icon full-moon"></i>
+                                        {% elif astronomy.moon_phase == "Waning Gibbous" %}
+                                            <i class="fas fa-moon moon-icon waning-gibbous"></i>
+                                        {% elif astronomy.moon_phase == "Last Quarter" %}
+                                            <i class="fas fa-moon moon-icon last-quarter"></i>
+                                        {% elif astronomy.moon_phase == "Waning Crescent" %}
+                                            <i class="fas fa-moon moon-icon waning-crescent"></i>
+                                        {% else %}
+                                            <i class="fas fa-moon moon-icon"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="moon-info">
+                                        <span>{{ astronomy.moon_phase }}</span>
+                                        <p>Moon Phase</p>
                                     </div>
                                 </div>
                             </div>

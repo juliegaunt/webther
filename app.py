@@ -1,11 +1,39 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 import requests
 from datetime import datetime
 import pytz
 from astral import LocationInfo
 from astral.sun import sun
+from astral.moon import phase
 
 app = Flask(__name__)
+
+def get_moon_phase_name(phase_value):
+    """
+    Determines the moon phase name based on the phase value.
+    The phase value is between 0 and 27.99, where:
+    0 = New Moon
+    7 = First Quarter
+    14 = Full Moon
+    21 = Last Quarter
+    """
+    # Convert to a 0-28 range
+    if phase_value < 1.75 or phase_value > 26.25:
+        return "New Moon"
+    elif 1.75 <= phase_value < 5.25:
+        return "Waxing Crescent"
+    elif 5.25 <= phase_value < 8.75:
+        return "First Quarter"
+    elif 8.75 <= phase_value < 12.25:
+        return "Waxing Gibbous"
+    elif 12.25 <= phase_value < 15.75:
+        return "Full Moon"
+    elif 15.75 <= phase_value < 19.25:
+        return "Waning Gibbous"
+    elif 19.25 <= phase_value < 22.75:
+        return "Last Quarter"
+    else:  # 22.75 <= phase_value < 26.25
+        return "Waning Crescent"
 
 def get_weather_data():
     try:
@@ -61,13 +89,19 @@ def get_weather_data():
         print(f"Current temperature from API: {current_temp}°F, Condition: {current_forecast}")
         print(f"First forecast period: {forecast_data['properties']['periods'][0]['temperature']}°F, {forecast_data['properties']['periods'][0]['shortForecast']}")
         
+        # Calculate moon phase
+        today = datetime.now()
+        moon_phase_value = phase(today)
+        moon_phase_name = get_moon_phase_name(moon_phase_value)
+        
         return {
             'forecast': forecast_data['properties']['periods'],
             'hourly': hourly_data['properties']['periods'],
             'humidity': hourly_data['properties']['periods'][0]['relativeHumidity']['value'],
             'astronomy': {
                 'sunrise': sunrise.strftime('%I:%M %p'),
-                'sunset': sunset.strftime('%I:%M %p')
+                'sunset': sunset.strftime('%I:%M %p'),
+                'moon_phase': moon_phase_name
             }
         }
     except Exception as e:
@@ -91,6 +125,21 @@ def index():
             'humidity': weather_data['humidity']
         }
         
+        # Use the data 6 hours into the future
+        future_index = 6  # Each period is 1 hour, so index 6 is 6 hours later
+        if future_index < len(hourly_data):
+            future = {
+                'temperature': hourly_data[future_index]['temperature'],
+                'temperatureUnit': hourly_data[future_index]['temperatureUnit'],
+                'shortForecast': hourly_data[future_index]['shortForecast'],
+                'windSpeed': hourly_data[future_index]['windSpeed'],
+                'windDirection': hourly_data[future_index]['windDirection'],
+                'time': datetime.strptime(hourly_data[future_index]['startTime'], '%Y-%m-%dT%H:%M:%S%z').strftime('%I:%M %p')
+            }
+        else:
+            # Fallback if not enough hourly data available
+            future = current.copy()
+            
         # Skip today and get the next 4 days
         forecast = []
         start_idx = 2  # Start from tomorrow (index 2) since index 0 is today and index 1 is tonight
@@ -113,6 +162,7 @@ def index():
         
         return render_template('index.html', 
                              current=current,
+                             future=future,  # Add the future (6-hour) forecast data
                              forecast=forecast,
                              astronomy=weather_data['astronomy'])
     except Exception as e:
