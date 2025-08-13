@@ -48,7 +48,7 @@ A modern, sleek weather dashboard web application built with Flask that displays
 
 3. Install required packages:
    ```bash
-   pip install flask requests pytz astral
+   pip install -r requirements.txt
    ```
 
 4. Run the application:
