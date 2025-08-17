@@ -2,8 +2,11 @@
 <html>
 <head>
     <title>Webther</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='20250817') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <script>
         // Auto-refresh the page every 30 minutes (1800000 milliseconds)
         setTimeout(function() {
@@ -75,7 +78,6 @@
                 <p class="error">{{ error }}</p>
             {% else %}
                 <div class="current-weather">
-                    <h2>Today's Weather</h2>
                     <div class="weather-info">
                         <div class="weather-row top-row">
                             <div class="current-main">
@@ -104,7 +106,7 @@
                                 <p class="wind"><i class="fas fa-wind"></i> {{ current.windSpeed }} {{ current.windDirection }}</p>
                             </div>
                             <div class="current-main">
-                                <h3>In 6 Hours ({{ future.time }})</h3>
+                                <h3>At&nbsp;{{ future.time }}</h3>
                                 <div class="current-temp-icon">
                                     <div class="temp">{{ future.temperature }}°{{ future.temperatureUnit }}</div>
                                     <div class="current-icon">

@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, make_response
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 from astral import LocationInfo
 from astral.sun import sun
@@ -111,6 +111,9 @@ def get_weather_data():
 @app.route('/')
 def index():
     try:
+        # Add no-cache headers to prevent browser caching
+        response = None
+        
         weather_data = get_weather_data()
         forecast_periods = weather_data['forecast']
         hourly_data = weather_data['hourly']
@@ -125,19 +128,34 @@ def index():
             'humidity': weather_data['humidity']
         }
         
-        # Use the data 6 hours into the future
-        future_index = 6  # Each period is 1 hour, so index 6 is 6 hours later
-        if future_index < len(hourly_data):
+        # Calculate a time exactly 6 hours in the future
+        now = datetime.now(pytz.timezone('America/New_York'))
+        target_time = now + timedelta(hours=6)
+        
+        # Find the forecast period closest to 6 hours from now
+        closest_index = 0
+        smallest_diff = float('inf')
+        
+        for i, period in enumerate(hourly_data):
+            period_time = datetime.strptime(period['startTime'], '%Y-%m-%dT%H:%M:%S%z')
+            time_diff = abs((period_time - target_time).total_seconds())
+            
+            if time_diff < smallest_diff:
+                smallest_diff = time_diff
+                closest_index = i
+        
+        # Use the forecast period closest to 6 hours from now
+        if closest_index < len(hourly_data):
             future = {
-                'temperature': hourly_data[future_index]['temperature'],
-                'temperatureUnit': hourly_data[future_index]['temperatureUnit'],
-                'shortForecast': hourly_data[future_index]['shortForecast'],
-                'windSpeed': hourly_data[future_index]['windSpeed'],
-                'windDirection': hourly_data[future_index]['windDirection'],
-                'time': datetime.strptime(hourly_data[future_index]['startTime'], '%Y-%m-%dT%H:%M:%S%z').strftime('%I:%M %p')
+                'temperature': hourly_data[closest_index]['temperature'],
+                'temperatureUnit': hourly_data[closest_index]['temperatureUnit'],
+                'shortForecast': hourly_data[closest_index]['shortForecast'],
+                'windSpeed': hourly_data[closest_index]['windSpeed'],
+                'windDirection': hourly_data[closest_index]['windDirection'],
+                'time': datetime.strptime(hourly_data[closest_index]['startTime'], '%Y-%m-%dT%H:%M:%S%z').strftime('%I:%M %p')
             }
         else:
-            # Fallback if not enough hourly data available
+            # Fallback if no hourly data available
             future = current.copy()
             
         # Skip today and get the next 4 days
@@ -160,14 +178,22 @@ def index():
             }
             forecast.append(forecast_day)
         
-        return render_template('index.html', 
+        response = make_response(render_template('index.html', 
                              current=current,
                              future=future,  # Add the future (6-hour) forecast data
                              forecast=forecast,
-                             astronomy=weather_data['astronomy'])
+                             astronomy=weather_data['astronomy']))
+        
+        # Add no-cache headers
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
     except Exception as e:
         print(f"Error: {str(e)}")  # Print the error to console
-        return render_template('index.html', error=str(e))
+        response = make_response(render_template('index.html', error=str(e)))
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        return response
 
 if __name__ == '__main__':
     app.run(debug=True)
